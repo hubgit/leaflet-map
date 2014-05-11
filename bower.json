@@ -1,0 +1,14 @@
+{
+  "name": "leaflet-map",
+  "version": "0.0.0",
+  "main": "leaflet-map.html",
+  "authors": [
+    "Alf Eaton"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/hubgit/leaflet-map",
+  "ignore": [
+    "**/.*",
+    "bower_components"
+  ]
+}
