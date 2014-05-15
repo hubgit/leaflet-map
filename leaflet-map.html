@@ -2,12 +2,14 @@
 
 <script src="leaflet/leaflet.js"></script>
 
-<polymer-element name="leaflet-map"
-  attributes="width height zoom lat lng tiles items panelTitle">
+<polymer-element name="leaflet-map" attributes="width height zoom lat lng tiles panelTitle">
   <template>
     <style>:host { display: block; }</style>
+
     <figure class="panel panel-default">
-      <h2 class="panel-heading" template if="{{ panelTitle }}">{{ panelTitle }}</h2>
+      <template if="{{ panelTitle }}">
+        <h2 class="panel-heading">{{ panelTitle }}</h2>
+      </template>
 
       <div id="map"></div>
 
@@ -19,37 +21,34 @@
 
   <script>
   Polymer('leaflet-map', {
-    panelTitle: '',
-    width: '100%',
+    tiles: 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg',
     height: '500px',
-    zoom: 10,
+    width: '100%',
     lat: 51.5,
     lng: 0,
-    tiles: 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg',
-    added: {},
-    ready: function() {
-      this.items = this.items || [];
-      this.added = {};
+    zoom: 10,
+    panelTitle: '',
 
-      ['width', 'height'].forEach(function(property) {
-        this.$.map.style[property] = this[property];
-      }.bind(this));
+    ready: function() {
+      L.Icon.Default.imagePath = 'path-to-your-leaflet-images-folder';
+
+      this.$.map.style.width = this.width;
+      this.$.map.style.height = this.height;
 
       this.map = L.map(this.$.map).setView([this.lat, this.lng], this.zoom);
-
       L.tileLayer(this.tiles).addTo(this.map);
 
-      // make the map draw full size
-      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(new Event('resize')); // redraw the map full size now it's visible
     },
-    itemsChanged: function() {
-      this.items.filter(function(item) {
-        return item.geolocation && !this.added[item._id];
-      }.bind(this)).forEach(function(item) {
-        this.added[item._id] = L.marker([item.geolocation.lat, item.geolocation.lng])
-          .addTo(this.map)
-          .bindPopup('<strong>' + item.name + '</strong><br>' + item.location); // FIXME: build an element
-      }.bind(this));
+
+    addMarker: function(data) {
+      var marker = L.marker([ data.lat, data.lng ]).addTo(this.map);
+
+      if (data.popup) {
+        marker.bindPopup(data.popup);
+      }
+
+      return marker;
     }
   });
   </script>
