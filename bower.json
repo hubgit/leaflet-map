@@ -10,5 +10,8 @@
   "ignore": [
     "**/.*",
     "bower_components"
-  ]
+  ],
+  "dependencies": {
+    "leaflet.markercluster": "~0.4.0"
+  }
 }

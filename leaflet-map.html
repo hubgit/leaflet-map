@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="leaflet/leaflet.css">
+<link rel="stylesheet" href="../leaflet.markercluster/dist/MarkerCluster.css">
+<link rel="stylesheet" href="../leaflet.markercluster/dist/MarkerCluster.Default.css">
 
 <script src="leaflet/leaflet.js"></script>
+<script src="../leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <polymer-element name="leaflet-map" attributes="width height zoom lat lng tiles panelTitle">
   <template>
@@ -38,15 +41,22 @@
       this.map = L.map(this.$.map).setView([this.lat, this.lng], this.zoom);
       L.tileLayer(this.tiles).addTo(this.map);
 
+      this.markers = new L.MarkerClusterGroup({
+        maxClusterRadius: 20
+      });
+      this.map.addLayer(this.markers);
+
       window.dispatchEvent(new Event('resize')); // redraw the map full size now it's visible
     },
 
     addMarker: function(data) {
-      var marker = L.marker([ data.lat, data.lng ]).addTo(this.map);
+      var marker = L.marker([ data.lat, data.lng ]);//.addTo(this.map);
 
       if (data.popup) {
         marker.bindPopup(data.popup);
       }
+
+      this.markers.addLayer(marker);
 
       return marker;
     }
