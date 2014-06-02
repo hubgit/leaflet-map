@@ -1,65 +1,25 @@
 <script src="leaflet/leaflet.js"></script>
 <script src="../leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-<polymer-element name="leaflet-map" attributes="width height zoom lat lng tiles panelTitle">
+<polymer-element name="leaflet-map" attributes="width height zoom lat lng tiles">
   <template>
+    <link rel="stylesheet" href="../bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="leaflet/leaflet.css">
     <link rel="stylesheet" href="../leaflet.markercluster/dist/MarkerCluster.css">
     <link rel="stylesheet" href="../leaflet.markercluster/dist/MarkerCluster.Default.css">
 
-    <style>:host { display: block; }</style>
+    <style>
+    :host {
+      display: block;
+    }
+    .panel-heading {
+      margin-top: 0;
+      font-weight: 200;
+    }
+    </style>
 
-    <figure class="panel panel-default">
-      <template if="{{ panelTitle }}">
-        <h2 class="panel-heading">{{ panelTitle }}</h2>
-      </template>
-
-      <div id="map"></div>
-
-      <figcaption class="panel-body">
-        <content select="p"></content>
-      </figcaption>
-    </figure>
+    <div id="map"></div>
   </template>
 
-  <script>
-  Polymer('leaflet-map', {
-    tiles: 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg',
-    height: '500px',
-    width: '100%',
-    lat: 51.5,
-    lng: 0,
-    zoom: 10,
-    panelTitle: '',
-
-    ready: function() {
-      L.Icon.Default.imagePath = 'path-to-your-leaflet-images-folder';
-
-      this.$.map.style.width = this.width;
-      this.$.map.style.height = this.height;
-
-      this.map = L.map(this.$.map).setView([this.lat, this.lng], this.zoom);
-      L.tileLayer(this.tiles).addTo(this.map);
-
-      this.markers = new L.MarkerClusterGroup({
-        maxClusterRadius: 20
-      });
-      this.map.addLayer(this.markers);
-
-      window.dispatchEvent(new Event('resize')); // redraw the map full size now it's visible
-    },
-
-    addMarker: function(data) {
-      var marker = L.marker([ data.lat, data.lng ]);//.addTo(this.map);
-
-      if (data.popup) {
-        marker.bindPopup(data.popup);
-      }
-
-      this.markers.addLayer(marker);
-
-      return marker;
-    }
-  });
-  </script>
+  <script src="leaflet-map.js"></script>
 </element>
