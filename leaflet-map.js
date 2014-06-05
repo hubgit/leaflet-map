@@ -8,40 +8,38 @@ Polymer('leaflet-map', {
   width: '100%',
   lat: 51.5,
   lng: 0,
-  zoom: 10,
+  zoom: 2,
+  clusterSize: 20,
 
   ready: function() {
-    L.Icon.Default.imagePath = 'leaflet/images';
+    L.Icon.Default.imagePath = 'bower_components/leaflet-map/leaflet/images';
 
     this.$.map.style.width = this.width;
     this.$.map.style.height = this.height;
 
     this.map = L.map(this.$.map).setView([this.lat, this.lng], this.zoom);
+
     L.tileLayer(this.tiles).addTo(this.map);
 
     this.markers = new L.MarkerClusterGroup({
-      maxClusterRadius: 20
+      maxClusterRadius: this.clusterSize
     });
-    this.map.addLayer(this.markers);
+
+    this.layer = L.geoJson();
+
+    this.markers.addLayer(this.layer);
+
+    this.map.addLayer(this.layer); // TODO: this.markers
 
     window.dispatchEvent(new Event('resize')); // redraw the map full size now it's visible
   },
 
-  reset: function() {
-    //this.markers.reset();
-  },
+  dataChanged: function() {
+    this.layer.clearLayers();
 
-  add: function(item) {
-    console.log('add', item);
-
-    var marker = L.marker([ item.lat, item.lng ]);//.addTo(this.map);
-
-    if (item.popup) {
-      marker.bindPopup(item.popup);
+    if (this.data) {
+      this.layer.addData(this.data);
+      //this.map.fitBounds(this.layer.getBounds());
     }
-
-    this.markers.addLayer(marker);
-
-    return marker;
   }
 });
