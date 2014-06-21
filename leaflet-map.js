@@ -21,25 +21,27 @@ Polymer('leaflet-map', {
 
     L.tileLayer(this.tiles).addTo(this.map);
 
-    this.markers = new L.MarkerClusterGroup({
-      maxClusterRadius: this.clusterSize
-    });
-
-    this.layer = L.geoJson();
-
-    this.markers.addLayer(this.layer);
-
-    this.map.addLayer(this.layer); // TODO: this.markers
-
     window.dispatchEvent(new Event('resize')); // redraw the map full size now it's visible
   },
 
   dataChanged: function() {
-    this.layer.clearLayers();
+    //this.layer.clearLayers();
 
     if (this.data) {
-      this.layer.addData(this.data);
-      //this.map.fitBounds(this.layer.getBounds());
+      if (this.markers) {
+        this.map.removeLayer(this.markers);
+      }
+
+      this.markers = L.markerClusterGroup({
+        maxClusterRadius: this.clusterSize,
+        singleMarkerMode: true,
+      });
+
+      this.markers.addLayer(L.geoJson(this.data));
+      this.map.addLayer(this.markers);
+
+      //this.layer.addData(this.data);
+      this.map.fitBounds(this.markers.getBounds());
     }
   }
 });
